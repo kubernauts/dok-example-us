@@ -1,2 +1,3 @@
-# dok-example-us
-An example microservices app for Developing on Kubernetes
+# Developing on Kubernetes
+
+Two microservices.
