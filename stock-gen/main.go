@@ -35,10 +35,18 @@ func main() {
 	}
 	// kick of random updates in the background:
 	go func() {
+		crashepochraw := os.Getenv("DOK_STOCKGEN_CRASHEPOCH")
+		crashepoch := 500
+		if crashepochraw != "" {
+			crashepoch, err = strconv.Atoi(crashepochraw)
+			if err != nil {
+				crashepoch = 500
+			}
+		}
 		for {
 			switch {
-			// every 500 ticks we shuffle stock values randomly
-			case tick%500 == 0:
+			// every "crash epoch" ticks we shuffle stock values randomly:
+			case tick%crashepoch == 0:
 				stocks = crash(stocks)
 			// normally, we increase or decrease relative to a random peer:
 			default:
