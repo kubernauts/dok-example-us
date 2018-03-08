@@ -21,10 +21,19 @@ type Stock struct {
 }
 
 func main() {
+	// load the symbols and their initial values:
 	stocks, err := loadsym()
 	if err != nil {
 		fmt.Printf("Couldn't load symbols due to %v\n", err)
 	}
+	// kick of random updates in the background:
+	go func() {
+		for {
+			stocks = update(stocks)
+			time.Sleep(5 * time.Second)
+		}
+	}()
+	// HTTP API:
 	http.HandleFunc("/stockdata", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		reallyrandom := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -35,6 +44,7 @@ func main() {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	})
+	// the service:
 	port := os.Getenv("DOK_STOCKGEN_PORT")
 	if port == "" {
 		port = "80"
@@ -43,6 +53,15 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error launching service %v\n", err)
 	}
+}
+
+func update(in []Stock) (out []Stock) {
+	for _, s := range in {
+		cs := s
+		cs.Value++
+		out = append(out, cs)
+	}
+	return out
 }
 
 func loadsym() (stocks []Stock, err error) {
