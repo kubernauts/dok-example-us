@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 // Stock represents a company listed at a stock market.
@@ -26,7 +27,8 @@ func main() {
 	}
 	http.HandleFunc("/stockdata", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		idx := rand.Intn(len(stocks))
+		reallyrandom := rand.New(rand.NewSource(time.Now().UnixNano()))
+		idx := reallyrandom.Intn(len(stocks))
 		err = json.NewEncoder(w).Encode(stocks[idx])
 		if err != nil {
 			fmt.Printf("HTTP %v\n", err)
@@ -48,12 +50,14 @@ func loadsym() (stocks []Stock, err error) {
 	if symfile == "" {
 		symfile = "./symbols.csv"
 	}
+	fmt.Printf("using symbols from %v\n", symfile)
 	c, err := os.Open(symfile)
 	if err != nil {
 		return stocks, err
 	}
+	csvreader := csv.NewReader(bufio.NewReader(c))
 	for {
-		record, error := csv.NewReader(bufio.NewReader(c)).Read()
+		record, error := csvreader.Read()
 		if error == io.EOF {
 			break
 		} else if error != nil {
@@ -63,11 +67,13 @@ func loadsym() (stocks []Stock, err error) {
 		if err != nil {
 			return stocks, err
 		}
-		stocks = append(stocks, Stock{
+		stock := Stock{
 			Symbol:   record[0],
 			Value:    v,
 			Currency: "USD",
-		})
+		}
+		stocks = append(stocks, stock)
+		fmt.Printf("adding symbol %v\n", stock)
 	}
 	return stocks, nil
 }
