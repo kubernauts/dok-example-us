@@ -35,6 +35,7 @@ func main() {
 	}
 	// kick of random updates in the background:
 	go func() {
+		tick = 1
 		crashepochraw := os.Getenv("DOK_STOCKGEN_CRASHEPOCH")
 		crashepoch := 500
 		if crashepochraw != "" {
