@@ -20,6 +20,13 @@ type Stock struct {
 	Currency string  `json:"currency"`
 }
 
+const (
+	minPrice = 2.0
+	maxPrice = 1000.0
+)
+
+var tick int
+
 func main() {
 	// load the symbols and their initial values:
 	stocks, err := loadsym()
@@ -29,16 +36,22 @@ func main() {
 	// kick of random updates in the background:
 	go func() {
 		for {
-			stocks = update(stocks)
-			time.Sleep(5 * time.Second)
+			switch {
+			// every 500 ticks we shuffle stock values randomly
+			case tick%500 == 0:
+				stocks = crash(stocks)
+			// normally, we increase or decrease relative to a random peer:
+			default:
+				stocks = update(stocks)
+			}
+			tick++
+			time.Sleep(1 * time.Second)
 		}
 	}()
 	// HTTP API:
 	http.HandleFunc("/stockdata", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		reallyrandom := rand.New(rand.NewSource(time.Now().UnixNano()))
-		idx := reallyrandom.Intn(len(stocks))
-		err = json.NewEncoder(w).Encode(stocks[idx])
+		err = json.NewEncoder(w).Encode(stocks)
 		if err != nil {
 			fmt.Printf("HTTP %v\n", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -56,12 +69,36 @@ func main() {
 }
 
 func update(in []Stock) (out []Stock) {
+	reallyrandom := rand.New(rand.NewSource(time.Now().UnixNano()))
 	for _, s := range in {
 		cs := s
-		cs.Value++
+		idx := reallyrandom.Intn(len(in))
+		cs.Value = genval(cs.Value, in[idx].Value)
 		out = append(out, cs)
 	}
 	return out
+}
+
+func crash(in []Stock) (out []Stock) {
+	for _, s := range in {
+		cs := s
+		reallyrandom := rand.New(rand.NewSource(time.Now().UnixNano()))
+		cs.Value = minPrice + reallyrandom.Float64()*maxPrice
+		out = append(out, cs)
+	}
+	return out
+}
+
+func genval(current, peer float64) (new float64) {
+	switch {
+	case current < peer:
+		new = current + 1
+	case current > peer:
+		new = current - 1
+	default:
+		new = current
+	}
+	return new
 }
 
 func loadsym() (stocks []Stock, err error) {
