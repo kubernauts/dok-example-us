@@ -1,0 +1,40 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: stock-con
+  name: stock-con
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: stock-con
+    spec:
+      containers:
+      - name: stock-con
+        image: quay.io/repository/mhausenblas/stock-con
+        env:
+        - name: DOK_STOCKGEN_HOSTNAME
+          value: stock-gen
+        - name: DOK_STOCKGEN_PORT
+          value: "9999"
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: stock-con
+  name: stock-con
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 9898
+  selector:
+    app: stock-con
