@@ -1,5 +1,7 @@
 # The stock generator
 
+## Local development
+
 Set it up locally (assumes Go 1.9 or above installed):
 
 ```bash
@@ -20,3 +22,7 @@ $ while true; do \
    sleep 1 ; 
   done
 ```
+
+## Containerized deployment
+
+The `stock-gen` app container image is defined in [Dockerfile](./Dockerfile) and publicly available via [quay.io/mhausenblas/stock-gen](https://quay.io/repository/mhausenblas/stock-gen).
