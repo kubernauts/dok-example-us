@@ -1,0 +1,13 @@
+{
+    "name": "dok-stock-con",
+    "version": "0.1.0",
+    "description": "Developing on Kubernetes—stock market consumption service",
+    "author": "Michael Hausenblas <mhausenb@redhat.com>",
+    "main": "service.js",
+    "scripts": {
+        "start": "node service.js"
+    },
+    "dependencies": {
+        "express": "^4.16.2"
+    }
+}

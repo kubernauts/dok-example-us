@@ -1,6 +1,6 @@
 # The stock generator
 
-Set it up locally:
+Set it up locally (assumes Go 1.9 or above installed):
 
 ```bash
 $ go get github.com/kubernauts/dok-example-us/stock-gen
