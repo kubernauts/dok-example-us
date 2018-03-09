@@ -1,4 +1,4 @@
-# Developing on Kubernetes
+# Developing on Kubernetes—stock market simulator
 
 This repository contains two microservices that make up an application:
 
@@ -8,3 +8,25 @@ A second microservice, the so called [stock consumer](stock-con/) is written in 
 
 1. `average/$SYMBOL/$PERIOD` … calculates the average of stock symbol `$SYMBOL` over the past `$PERIOD` ticks
 1. `gekko/$SYMBOL/` … provides a recommendation like sell/hold/buy for stock symbol `$SYMBOL`
+
+An example deployment of the stock market simulator app is available via [dok-stock.k8space.io](http://dok-stock.k8space.io/). An example usage is:
+
+```bash
+$ http http://dok-stock.k8space.io/average/NASDAQ:GOOG/100
+HTTP/1.1 200 OK
+Cache-control: private
+Content-Length: 69
+Content-Type: application/json; charset=utf-8
+Date: Fri, 09 Mar 2018 11:38:00 GMT
+ETag: W/"45-R243Yyzufy9HGw0y68BT9Se6MSU"
+Set-Cookie: 71af4f5536b9555d3b33b3cf9259e118=3307aeac4cb8930c89458d8f9da6ad1d; path=/; HttpOnly
+X-Powered-By: Express
+
+[
+    {
+        "currency": "USD",
+        "symbol": "NASDAQ:GOOG",
+        "value": 946.3651412312363
+    }
+]
+```
