@@ -1,5 +1,7 @@
 # The stock consumer
 
+## Local development
+
 Set it up locally (assumes `npm` installed):
 
 ```bash
@@ -17,4 +19,15 @@ In another terminal (requires `http` installed):
 
 ```bash
 $ http localhost:9898/average/NYSE:RHT/100
+```
+
+## Containerized deployment
+
+The `stock-con` app container image is defined in [Dockerfile](./Dockerfile) and publicly available via [quay.io/mhausenblas/stock-con](https://quay.io/repository/mhausenblas/stock-con).
+
+To deploy it as an Kubernetes application, use the [provided manifest](./app.yaml) like so:
+
+```bash
+$ kubectl create -f app.yaml
+$ kubectl get deploy,svc,po
 ```

@@ -26,3 +26,10 @@ $ while true; do \
 ## Containerized deployment
 
 The `stock-gen` app container image is defined in [Dockerfile](./Dockerfile) and publicly available via [quay.io/mhausenblas/stock-gen](https://quay.io/repository/mhausenblas/stock-gen).
+
+To deploy it as an Kubernetes application, use the [provided manifest](./app.yaml) like so:
+
+```bash
+$ kubectl create -f app.yaml
+$ kubectl get deploy,svc,po
+```

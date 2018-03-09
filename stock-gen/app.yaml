@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: stock-gen
-        image: quay.io/repository/mhausenblas/stock-gen:0.2
+        image: quay.io/mhausenblas/stock-gen:0.2
         env:
         - name: DOK_STOCKGEN_PORT
           value: "9999"

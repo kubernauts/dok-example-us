@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: stock-con
-        image: quay.io/repository/mhausenblas/stock-con:0.2
+        image: quay.io/mhausenblas/stock-con:0.2
         env:
         - name: DOK_STOCKGEN_HOSTNAME
           value: stock-gen
