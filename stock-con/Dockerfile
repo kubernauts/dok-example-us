@@ -3,6 +3,6 @@ MAINTAINER Michael Hausenblas <mhausenb@redhat.com>
 WORKDIR /app
 COPY . .
 RUN npm install express && \
-    npm install --production
+    npm install
 USER nobody:nobody
-CMD ["npm start"]
+CMD ["node", "service.js"]
