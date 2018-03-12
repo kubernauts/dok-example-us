@@ -27,7 +27,12 @@ app.get('/average/:symbol/:period', function (req, res) {
                 console.info('moving variance:', ma.variance());
                 console.info('moving deviation:', ma.deviation());
                 console.info('forecast:', ma.forecast());
-                res.json(ma.movingAverage())
+                var result = {
+                    symbol: stock.symbol,
+                    current: stock.value,
+                    avg: ma.movingAverage()
+                }
+                res.json(result)
                 res.end();
                 return
             }
