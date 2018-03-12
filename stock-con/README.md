@@ -31,3 +31,13 @@ To deploy it as an Kubernetes application, use the [provided manifest](./app.yam
 $ kubectl create -f app.yaml
 $ kubectl get deploy,svc,po
 ```
+
+## Grafana dashboard
+
+The following Grafana app requires an [Ingress controller](https://github.com/kubernetes/ingress-nginx/blob/master/deploy/README.md).
+
+```bash
+$ kubectl create -f grafana-app.yaml
+```
+
+Note: see also the [NGINX Ingress user guide](https://github.com/kubernetes/ingress-nginx/tree/master/docs/user-guide) for more options.

@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const avg = require('moving-average');
 const http = require("http");
 const https = require("https");
 
@@ -9,23 +10,29 @@ const app = express();
 
 var DOK_STOCKGEN_HOSTNAME = "stock-gen"
 var DOK_STOCKGEN_PORT = 80
+var timeInterval = 1 * 60 * 1000; // 1 minute (in ms)
+var ma = avg(timeInterval);
 
 app.get('/average/:symbol/:period', function (req, res) {
     var symbol = req.params.symbol,
         period = req.params.period;
-    var result = [];
     console.info('Calculating average stock price of symbol ' + symbol + ' over the past ' + period + ' ticks');
     httpGetJSON(DOK_STOCKGEN_HOSTNAME, DOK_STOCKGEN_PORT, '/stockdata', function (e, stocks) {
         for (var i = 0, len = stocks.length; i < len; i++) {
             var stock = stocks[i]
             console.info('Stock: ' + stock.symbol + ' @ ' + stock.value);
             if (symbol == stock.symbol) {
-                result.push(stock)
+                ma.push(Date.now(), stock.value);
+                console.info('moving average:', ma.movingAverage());
+                console.info('moving variance:', ma.variance());
+                console.info('moving deviation:', ma.deviation());
+                console.info('forecast:', ma.forecast());
+                res.json(ma.movingAverage())
+                res.end();
+                return
             }
+            // res.status(404).end();
         }
-        res.json(result)
-        res.end();
-        // res.status(404).end();
     });
 });
 
