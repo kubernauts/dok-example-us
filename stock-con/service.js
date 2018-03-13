@@ -17,6 +17,10 @@ app.get('/average/:symbol', function (req, res) {
     var symbol = req.params.symbol;
     console.info('\n===\nTargeting symbol ' + symbol + ' over the past ' + period/1000 + ' seconds');
     httpGetJSON(DOK_STOCKGEN_HOSTNAME, DOK_STOCKGEN_PORT, '/stockdata', function (e, stocks) {
+        if (stocks == null){
+            res.status(500).end();
+            return
+        }
         for (var i = 0, len = stocks.length; i < len; i++) {
             var stock = stocks[i]
             if (symbol == stock.symbol) {
@@ -34,7 +38,6 @@ app.get('/average/:symbol', function (req, res) {
                 res.end();
                 return
             }
-            // res.status(404).end();
         }
     });
 });
@@ -61,7 +64,7 @@ function httpGetJSON(host, port, path, callback) {
             callback(null, data);
         });
     }).on('error', function (err) {
-        console.error('Got error on request: ', err.message);
+        console.error('Can\'t GET data from ' + host + ':' + port + path + ' due to:', err.message);
         callback(err);
     });
 }
