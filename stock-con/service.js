@@ -9,14 +9,16 @@ var HashMap = require('hashmap');
 const SERVICE_PORT = 9898;
 const app = express();
 
-var DOK_STOCKGEN_HOSTNAME = "stock-gen"
-var DOK_STOCKGEN_PORT = 80
+var DOK_STOCKGEN_HOSTNAME = "stock-gen";
+var DOK_STOCKGEN_PORT = 80;
 var period = 60 * 1000; // 60 seconds 
 var sym2Avg = new HashMap();
+var lastseensym = "";
 
+// the average endpoint
 app.get('/average/:symbol', function (req, res) {
     var symbol = req.params.symbol;
-    console.info('\n===\nTargeting symbol ' + symbol + ' over the past ' + period/1000 + ' seconds');
+    console.info('\n===\nTargeting symbol [' + symbol + '] over the past ' + period/1000 + ' seconds');
     httpGetJSON(DOK_STOCKGEN_HOSTNAME, DOK_STOCKGEN_PORT, '/stockdata', function (e, stocks) {
         if (stocks == null){
             res.status(500).end();
@@ -26,6 +28,7 @@ app.get('/average/:symbol', function (req, res) {
             var stock = stocks[i];
             var ma = sym2Avg.get(stock.symbol);
             if (symbol == stock.symbol) {
+                lastseensym = symbol;
                 ma.push(Date.now(), stock.value);
                 console.info('Stock: ' + stock.symbol + ' @ ' + stock.value);
                 console.info('-> moving average:', ma.movingAverage());
@@ -41,7 +44,18 @@ app.get('/average/:symbol', function (req, res) {
                 return
             }
         }
+        res.status(404).end();
     });
+});
+
+// the health check endpoint
+app.get('/healthz', function (req, res) {
+    var result = {
+        numsymbols: sym2Avg.size,
+        lastseen: lastseensym
+    }
+    res.json(result);
+    res.end();
 });
 
 function httpGetJSON(host, port, path, callback) {
