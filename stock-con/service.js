@@ -10,27 +10,25 @@ const app = express();
 
 var DOK_STOCKGEN_HOSTNAME = "stock-gen"
 var DOK_STOCKGEN_PORT = 80
-var timeInterval = 1 * 60 * 1000; // 1 minute (in ms)
-var ma = avg(timeInterval);
+var period = 60 * 1000; // 60 seconds 
+var ma = avg(period);
 
-app.get('/average/:symbol/:period', function (req, res) {
-    var symbol = req.params.symbol,
-        period = req.params.period;
-    console.info('Calculating average stock price of symbol ' + symbol + ' over the past ' + period + ' ticks');
+app.get('/average/:symbol', function (req, res) {
+    var symbol = req.params.symbol;
+    console.info('\n===\nTargeting symbol ' + symbol + ' over the past ' + period/1000 + ' seconds');
     httpGetJSON(DOK_STOCKGEN_HOSTNAME, DOK_STOCKGEN_PORT, '/stockdata', function (e, stocks) {
         for (var i = 0, len = stocks.length; i < len; i++) {
             var stock = stocks[i]
-            console.info('Stock: ' + stock.symbol + ' @ ' + stock.value);
             if (symbol == stock.symbol) {
                 ma.push(Date.now(), stock.value);
-                console.info('moving average:', ma.movingAverage());
-                console.info('moving variance:', ma.variance());
-                console.info('moving deviation:', ma.deviation());
-                console.info('forecast:', ma.forecast());
+                console.info('Stock: ' + stock.symbol + ' @ ' + stock.value);
+                console.info('-> moving average:', ma.movingAverage());
+                console.info('-> forecast:', ma.forecast());
                 var result = {
                     symbol: stock.symbol,
                     current: stock.value,
-                    avg: ma.movingAverage()
+                    moving_average: ma.movingAverage(),
+                    forecast: ma.forecast()
                 }
                 res.json(result)
                 res.end();

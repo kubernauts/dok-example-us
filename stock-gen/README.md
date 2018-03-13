@@ -18,8 +18,8 @@ In another terminal (requires `http` and `jq` installed):
 
 ```bash
 $ while true; do \
-   http localhost:9876/stockdata | jq .[].symbol,.[].value ; 
-   sleep 1 ; 
+   http localhost:9876/stockdata | jq .[].symbol,.[].value ; \
+   sleep 1 ; \
   done
 ```
 

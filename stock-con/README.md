@@ -18,7 +18,10 @@ $ DOK_STOCKGEN_HOSTNAME=localhost DOK_STOCKGEN_PORT=9876 npm start
 In another terminal (requires `http` installed):
 
 ```bash
-$ http localhost:9898/average/NYSE:RHT/100
+$ while true; do \
+   http localhost:9898/average/NYSE:RHT ; \
+   sleep 2 ; \
+  done
 ```
 
 ## Containerized deployment
