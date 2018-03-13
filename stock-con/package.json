@@ -9,6 +9,7 @@
     },
     "dependencies": {
         "express": "^4.16.2",
+        "hashmap": "^2.3.0",
         "moving-average": "^1.0.0"
     }
 }

@@ -4,6 +4,7 @@ const express = require('express');
 const avg = require('moving-average');
 const http = require("http");
 const https = require("https");
+var HashMap = require('hashmap');
 
 const SERVICE_PORT = 9898;
 const app = express();
@@ -11,7 +12,7 @@ const app = express();
 var DOK_STOCKGEN_HOSTNAME = "stock-gen"
 var DOK_STOCKGEN_PORT = 80
 var period = 60 * 1000; // 60 seconds 
-var ma = avg(period);
+var sym2Avg = new HashMap();
 
 app.get('/average/:symbol', function (req, res) {
     var symbol = req.params.symbol;
@@ -22,7 +23,8 @@ app.get('/average/:symbol', function (req, res) {
             return
         }
         for (var i = 0, len = stocks.length; i < len; i++) {
-            var stock = stocks[i]
+            var stock = stocks[i];
+            var ma = sym2Avg.get(stock.symbol);
             if (symbol == stock.symbol) {
                 ma.push(Date.now(), stock.value);
                 console.info('Stock: ' + stock.symbol + ' @ ' + stock.value);
@@ -34,7 +36,7 @@ app.get('/average/:symbol', function (req, res) {
                     moving_average: ma.movingAverage(),
                     forecast: ma.forecast()
                 }
-                res.json(result)
+                res.json(result);
                 res.end();
                 return
             }
@@ -69,13 +71,27 @@ function httpGetJSON(host, port, path, callback) {
     });
 }
 
-if(process.env.DOK_STOCKGEN_HOSTNAME) {
-    DOK_STOCKGEN_HOSTNAME = process.env.DOK_STOCKGEN_HOSTNAME
+function init(){
+    if (process.env.DOK_STOCKGEN_HOSTNAME) {
+        DOK_STOCKGEN_HOSTNAME = process.env.DOK_STOCKGEN_HOSTNAME
+    }
+    if (process.env.DOK_STOCKGEN_PORT) {
+        DOK_STOCKGEN_PORT = parseInt(process.env.DOK_STOCKGEN_PORT, 10);
+    }
+    // read in all stock symbols and create a moving average object for each:
+    httpGetJSON(DOK_STOCKGEN_HOSTNAME, DOK_STOCKGEN_PORT, '/stockdata', function (e, stocks) {
+        if (stocks == null) {
+            return
+        }
+        for (var i = 0, len = stocks.length; i < len; i++) {
+            var stock = stocks[i];
+            var ma = avg(period);
+            console.info('Creating moving average for symbol ' + stock.symbol);
+            sym2Avg.set(stock.symbol, ma);
+        }
+    });
 }
 
-if (process.env.DOK_STOCKGEN_PORT) {
-    DOK_STOCKGEN_PORT = parseInt(process.env.DOK_STOCKGEN_PORT, 10);
-}
-
+init()
 app.listen(SERVICE_PORT);
 console.info('DoK stock market consumer service running on port ' + SERVICE_PORT);
