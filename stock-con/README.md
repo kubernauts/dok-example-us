@@ -1,6 +1,6 @@
 # The stock consumer
 
-The stock consumer (`stock-con`) consumes data from the [stock generator](../stock-gen/) and performs various calculations on different endpoint on it.
+The stock consumer (`stock-con`) consumes data from the [stock generator](../stock-gen/) and performs various calculations on different endpoints on it.
 
 - [Local development](#local-development)
 - [Endpoints](#endpoints)
@@ -70,7 +70,7 @@ Usage:
 /healthz
 ```
 
-Behavior: A `200` response like below, listing the number of known symbols and the symbols that has been queried for last (ignoring unknown symbols):
+Behavior: A `200` response like below, listing the number of known symbols and the symbol that has been queried for most recently (ignoring unknown symbols):
 
 ```bash
 HTTP/1.1 200 OK
