@@ -89,7 +89,7 @@ X-Powered-By: Express
 
 ## Containerized deployment
 
-The `stock-con` app container image is defined in [Dockerfile](./Dockerfile) and publicly available via [quay.io/mhausenblas/stock-con](https://quay.io/repository/mhausenblas/stock-con).
+The `stock-con` app container image is defined in [Dockerfile](./Dockerfile) and publicly available via [quay.io/mhausenblas/stock-con:0.3](https://quay.io/repository/mhausenblas/stock-con).
 
 To deploy it as an Kubernetes application, use the [provided manifest](./app.yaml) like so:
 
