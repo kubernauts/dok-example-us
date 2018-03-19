@@ -94,13 +94,33 @@ The `stock-con` app container image is defined in [Dockerfile](./Dockerfile) and
 To deploy it as an Kubernetes application, use the [provided manifest](./app.yaml) like so:
 
 ```bash
-$ kubectl create -f app.yaml
+$ kubectl apply -f app.yaml
 $ kubectl get deploy,svc,po
 ```
 
-## Grafana dashboard
+If you do have an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controller running, you can use the following to expose `stock-con` to the public:
 
-Note: the following is WIP!
+```bash
+$ kubectl apply -f public-con.yaml
+```
+
+Once the Ingress resource is deployed (check with `kubectl get ing`) you can access it like so (assuming the public-facing IP is `192.168.99.100`):
+
+```bash
+$ http --verify=no https://192.168.99.100/stock-con/average/NYSE:RHT
+```
+
+## Visualization
+
+**Note: the following is WIP, no need to look at it now.**
+
+Idea: install Prometheus and Grafana, instrument `stock-con` with [siimon/prom-client](https://github.com/siimon/prom-client), and visualize the stocks over time.
+
+### Prometheus
+
+TBD.
+
+### Grafana
 
 The Grafana app requires an [Ingress controller](https://github.com/kubernetes/ingress-nginx/blob/master/deploy/README.md).
 
