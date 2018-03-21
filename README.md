@@ -1,6 +1,8 @@
 # Developing on Kubernetes—stock market simulator
 
-This repository contains two microservices that make up an application:
+This repository contains two microservices that make up a stock market simulator application:
+
+![stock market simulator architecture](img/dok-architecture.png)
 
 One microservice, the so called [stock generator](stock-gen/) is written in Go and serves randomized stock data randomly via the HTTP endpoint `stockdata/`.
 
