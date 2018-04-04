@@ -52,7 +52,8 @@ app.get('/average/:symbol', function (req, res) {
 app.get('/healthz', function (req, res) {
     var result = {
         numsymbols: sym2Avg.size,
-        lastseen: lastseensym
+        lastseen: lastseensym,
+        newfeature: "blah"
     }
     res.json(result);
     res.end();
