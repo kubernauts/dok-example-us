@@ -53,7 +53,7 @@ app.get('/healthz', function (req, res) {
     var result = {
         numsymbols: sym2Avg.size,
         lastseen: lastseensym,
-        message: "Hello London"
+        message: "Thank you London"
     }
     res.json(result);
     res.end();
